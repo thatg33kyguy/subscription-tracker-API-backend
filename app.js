@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}));   //process form data in a simple way
 //cookieParser is used to parse cookies from the request headers
 app.use(cookieParser());
+app.set("trust proxy", true); 
 app.use(arcjetMiddleware); // Apply Arcjet middleware for rate limiting and bot detection
 
 app.use('/api/v1/subscriptions',subsRouter);
