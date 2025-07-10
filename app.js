@@ -1,7 +1,7 @@
 import express from 'express';
 
 import {PORT} from './config/env.js'
-
+import cors from 'cors';
 import subsRouter from './routes/subs.routes.js';
 import userRouter from './routes/user.routes.js';
 import authRouter from './routes/auth.routes.js';
@@ -13,7 +13,10 @@ import arcjetMiddleware from './middlewares/arcjet.middleware.js';
 import workflowRouter from './routes/workflow.routes.js';
 
 const app=express();
-
+app.use(cors({
+  origin: 'http://localhost:5173', // your frontend origin
+  credentials: true,              // allow cookies
+}));
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));   //process form data in a simple way
 //cookieParser is used to parse cookies from the request headers
