@@ -42,7 +42,7 @@ export const signUp = async (req, res, next) => {
       .cookie("token", token, {
         httpOnly: true,
         secure: true, // ✅ Required on Render
-        sameSite: "None", // ✅ Required for cross-origin cookies
+        sameSite: "none", // ✅ Required for cross-origin cookies
         maxAge: 1000 * 60 * 60 * 24 * 7,
       })
       .status(201)
@@ -88,7 +88,7 @@ export const signIn = async (req, res, next) => {
       .cookie("token", token, {
         httpOnly: true,
         secure: true, // ✅ MUST be true for Render (HTTPS only)
-        sameSite: "None", // ✅ required for cross-origin cookies
+        sameSite: "none", // ✅ required for cross-origin cookies
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       })
       .status(200)
