@@ -2,7 +2,7 @@ import mongoose from "mongoose"
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import  jwt from "jsonwebtoken";
-import { JWT_EXPIRES_IN, JWT_SECRET } from "../config/env.js";
+import { JWT_EXPIRES_IN, JWT_SECRET, NODE_ENV } from "../config/env.js";
 
 export const signUp = async (req, res, next) => {
     //session is used for atomic updates
@@ -33,7 +33,14 @@ export const signUp = async (req, res, next) => {
      
         const { password: _, ...userWithoutPassword } = newUser[0]._doc;
 
-        res.status(201).json({              //send response
+        
+        res
+        .cookie("token", token, {
+            httpOnly: true,
+            secure: NODE_ENV === "production", // send only on HTTPS in production
+            sameSite: "lax", // or 'strict' for extra protection
+            maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        }).status(201).json({              //send response
             success:true,
             message:"User created Successfully",
             data:{
@@ -81,4 +88,18 @@ export const signIn = async (req, res, next) => {
     }
 }
 
-export const signOut = async (req, res, next) => {}
+export const signOut = async (req, res, next) => {try {
+    res
+      .clearCookie("token", {
+        httpOnly: true,
+        secure:NODE_ENV === "production",
+        sameSite: "lax",
+      })
+      .status(200)
+      .json({
+        success: true,
+        message: "Logged out successfully",
+      });
+  } catch (error) {
+    next(error);
+  }}
