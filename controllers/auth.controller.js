@@ -5,19 +5,16 @@ import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import { JWT_EXPIRES_IN, JWT_SECRET, NODE_ENV } from "../config/env.js";
 
-// --- Helper for Production Cookie Settings ---
-// When deploying, cookies must be secure and allow cross-site requests.
 const getCookieOptions = () => {
   console.log("NODE_ENV =", NODE_ENV);
   if (NODE_ENV === 'production') {
     return {
       httpOnly: true,
-      secure: true,     // ✅ MUST be true for HTTPS (which OnRender uses)
-      sameSite: 'None', // ✅ MUST be 'none' for cross-domain cookies
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      secure: true,     
+      sameSite: 'None',
+      maxAge: 1000 * 60 * 60 * 24 * 7,  
     };
   }
-  // Default settings for local development (HTTP)
   return {
     httpOnly: true,
     secure: false,
