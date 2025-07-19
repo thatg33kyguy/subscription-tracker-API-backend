@@ -1,6 +1,6 @@
 import express from 'express';
 
-import {PORT} from './config/env.js'
+import {PORT,NODE_ENV} from './config/env.js'
 import cors from 'cors';
 import subsRouter from './routes/subs.routes.js';
 import userRouter from './routes/user.routes.js';
@@ -13,9 +13,13 @@ import arcjetMiddleware from './middlewares/arcjet.middleware.js';
 import workflowRouter from './routes/workflow.routes.js';
 
 const app=express();
+const frontendURL = NODE_ENV === 'production'
+  ? 'https://sub-tracker-frontend-sandy.vercel.app'
+  : 'http://localhost:5173';
+
 app.use(cors({
-  origin: 'http://localhost:5173', // your frontend origin
-  credentials: true,              // allow cookies
+  origin: frontendURL,
+  credentials: true, // Allow cookies to be sent from the frontend
 }));
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));   //process form data in a simple way

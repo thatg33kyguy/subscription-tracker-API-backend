@@ -10,7 +10,7 @@ export const sendReminderEmail = async ({ to, type, subscription }) => {
     // Map type to daysLeft
     const daysMap = { '7days': 7, '5days': 5, '3days': 3, '1day': 1 };
     const daysLeft = daysMap[type] || 0;
-
+    console.log(`Preparing to send ${daysLeft} day type ${type} email for subscription: ${subscription.name}`);
     // Prepare template data
     const template = getRenewalEmailTemplate({
         userName: subscription.user.name || 'User',
@@ -37,3 +37,4 @@ export const sendReminderEmail = async ({ to, type, subscription }) => {
         throw error;
     }
 };
+

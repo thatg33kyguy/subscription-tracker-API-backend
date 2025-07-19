@@ -1,23 +1,33 @@
 import { Router } from "express";
 import authorise from "../middlewares/auth.middleware.js";
-import { getUserById, getUsers } from "../controllers/user.controller.js";
+import { 
+    getUsers, 
+    getUserById, 
+    createUser, 
+    updateUser, 
+    deleteUser 
+} from "../controllers/user.controller.js";
+// import User from "../models/user.model.js";
 
 const userRouter = Router();
 
-userRouter.get('/', getUsers);
+// --- Public Routes ---
+userRouter.get("/", getUsers);
+// Note: In a production app, POST /users should be an admin-only route.
+userRouter.post("/", createUser); 
 
-userRouter.get('/:id',authorise, getUserById);      // Use authorise middleware to protect this route
 
-userRouter.post('/', (req, res) => {
-    res.send({title:'Create a new user'});
+userRouter.get("/me", authorise, async (req, res, next) => {
+  try {
+    res.status(200).json({ user: req.user });
+  } catch (error) {
+    next(error);
+  }
 });
 
-userRouter.put('/:id', (req, res) => {
-    res.send({title:'UPDATE user details'});
-});
+userRouter.get("/:id", authorise, getUserById);
 
-userRouter.delete('/:id', (req, res) => {
-    res.send({title:'DELETE user'});
-});
+userRouter.put("/:id", authorise, updateUser);
+userRouter.delete("/:id", authorise, deleteUser);
 
 export default userRouter;

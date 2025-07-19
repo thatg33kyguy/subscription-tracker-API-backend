@@ -82,3 +82,98 @@ export const getSubscriptionDetails = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteSubscription = async (req, res, next) => {
+  try {
+    const deleted = await Subscription.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "Subscription not found." });
+    }
+
+    res.status(200).json({ success: true, message: "Subscription deleted successfully." });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const cancelSubscription = async (req, res, next) => {
+  try {
+    const subscription = await Subscription.findOneAndUpdate(
+      { _id: req.params.id, user: req.user._id },
+      { status: 'cancelled' },
+      { new: true }
+    );
+
+    if (!subscription) {
+      return res.status(404).json({
+        success: false,
+        message: 'Subscription not found or unauthorized.',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Subscription cancelled successfully.',
+      data: subscription,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const updateSubscription = async (req, res, next) => {
+  try {
+    // Filter out undefined values
+    const updates = {};
+    for (const [key, value] of Object.entries(req.body)) {
+      if (value !== undefined) {
+        updates[key] = value;
+      }
+    }
+
+    const updated = await Subscription.findOneAndUpdate(
+      { _id: req.params.id, user: req.user._id },
+      updates,
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: "Subscription not found or unauthorized.",
+      });
+    }
+
+    res.status(200).json({ success: true, data: updated });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const getUserUpcomingRenewals = async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+
+    const now = new Date();
+    const oneMonthLater = new Date();
+    oneMonthLater.setDate(now.getDate() + 30); // or use moment.js for precision
+
+    const upcoming = await Subscription.find({
+      user: userId,
+      renewalDate: { $gte: now, $lte: oneMonthLater },
+      status: 'active'
+    }).sort({ renewalDate: 1 });
+
+    res.status(200).json({
+      success: true,
+      count: upcoming.length,
+      data: upcoming,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
