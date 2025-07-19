@@ -8,6 +8,7 @@ import { JWT_EXPIRES_IN, JWT_SECRET, NODE_ENV } from "../config/env.js";
 // --- Helper for Production Cookie Settings ---
 // When deploying, cookies must be secure and allow cross-site requests.
 const getCookieOptions = () => {
+  console.log("NODE_ENV =", NODE_ENV);
   if (NODE_ENV === 'production') {
     return {
       httpOnly: true,
