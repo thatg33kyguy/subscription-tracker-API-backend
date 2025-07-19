@@ -13,7 +13,7 @@ const getCookieOptions = () => {
     return {
       httpOnly: true,
       secure: true,     // ✅ MUST be true for HTTPS (which OnRender uses)
-      sameSite: 'none', // ✅ MUST be 'none' for cross-domain cookies
+      sameSite: 'None', // ✅ MUST be 'none' for cross-domain cookies
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     };
   }
